@@ -1,9 +1,9 @@
-package br.cefet.control;
+package br.cefet.vsged.util;
 
 import java.awt.Label;
 import java.util.ArrayList;
 
-import br.cefet.model.Vertex;
+import br.cefet.vsged.model.Vertex;
 
 public class ToolTip {
 

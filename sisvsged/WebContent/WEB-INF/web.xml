@@ -13,7 +13,7 @@
     <description></description>
     <display-name>ServletGraphic</display-name>
     <servlet-name>ServletGraphic</servlet-name>
-    <servlet-class>br.cefet.servlet.ServletGraphic</servlet-class>
+    <servlet-class>br.cefet.vsged.servlet.ServletGraphic</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>ServletGraphic</servlet-name>

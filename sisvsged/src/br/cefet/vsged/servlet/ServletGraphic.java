@@ -1,4 +1,4 @@
-package br.cefet.servlet;
+package br.cefet.vsged.servlet;
 
 import java.awt.Desktop;
 import java.io.IOException;

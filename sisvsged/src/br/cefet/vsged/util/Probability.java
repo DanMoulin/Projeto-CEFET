@@ -1,4 +1,4 @@
-package br.cefet.control;
+package br.cefet.vsged.util;
 
 
 public class Probability {

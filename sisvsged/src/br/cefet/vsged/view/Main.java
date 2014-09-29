@@ -1,4 +1,4 @@
-package br.cefet.view;
+package br.cefet.vsged.view;
 
 import java.applet.Applet;
 import java.awt.Color;
@@ -14,23 +14,23 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
-import br.cefet.control.Arrow;
-import br.cefet.control.Box;
-import br.cefet.control.BreadthFirstSearch;
-import br.cefet.control.Probability;
-import br.cefet.control.Resume;
-import br.cefet.control.ToolTip;
-import br.cefet.model.Adjacency;
-import br.cefet.model.Distance;
-import br.cefet.model.Vertex;
-import br.cefet.model.log.Caretaker;
-import br.cefet.model.log.Text;
+import br.cefet.vsged.model.Adjacency;
+import br.cefet.vsged.model.Distance;
+import br.cefet.vsged.model.Vertex;
+import br.cefet.vsged.model.log.Caretaker;
+import br.cefet.vsged.model.log.Text;
+import br.cefet.vsged.util.Arrow;
+import br.cefet.vsged.util.Box;
+import br.cefet.vsged.util.BreadthFirstSearch;
+import br.cefet.vsged.util.Probability;
+import br.cefet.vsged.util.Resume;
+import br.cefet.vsged.util.ToolTip;
 
 
 @SuppressWarnings("serial")
 public class Main extends Applet implements Runnable, ItemListener,
 		ActionListener {
-//teste
+
 	private Thread t;
 	private ArrayList<Vertex> vertex = new ArrayList<Vertex>();
 	private int[] xPositions;
@@ -564,26 +564,26 @@ public class Main extends Applet implements Runnable, ItemListener,
 
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getActionCommand() == " |> ") {
-			Menu.setStartedSimulation(true);
-			check = false;
-			
-			//insere novos pacotes
-			//---- metodo -- com alterações
-			packages[0] = 0;
-			for (int i = 1; i < packages.length; i++) {
-				packages[i] = 1;
-			}
-			//----
-			for (int i = 1; i < vertex.size(); i++) {
-				vertex.get(i).resetBathery(3000);
-				vertex.get(i).setActivate(true);
-			}
-			Menu.setTime(1);
-			//----
-			log = new Caretaker(new ArrayList<Text>());
-			insertLog();
-			
 			if(Menu.getPause().isEnabled()) {
+				Menu.setStartedSimulation(true);
+				check = false;
+
+				// insere novos pacotes
+				// ---- metodo -- com alterações
+				packages[0] = 0;
+				for (int i = 1; i < packages.length; i++) {
+					packages[i] = 1;
+				}
+				// ----
+				for (int i = 1; i < vertex.size(); i++) {
+					vertex.get(i).resetBathery(3000);
+					vertex.get(i).setActivate(true);
+				}
+				Menu.setTime(1);
+				// ----
+				log = new Caretaker(new ArrayList<Text>());
+				insertLog();
+
 				JOptionPane.showMessageDialog(null, "Simulação iniciada !");
 				// ----grafico de nivel de bateria
 				//---- metodo

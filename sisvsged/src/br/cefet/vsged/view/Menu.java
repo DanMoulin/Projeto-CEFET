@@ -1,16 +1,19 @@
-package br.cefet.view;
+package br.cefet.vsged.view;
 
 import java.applet.Applet;
 import java.awt.Button;
 import java.awt.Checkbox;
 import java.awt.Graphics;
 import java.awt.Label;
+import java.awt.TextField;
+import java.awt.event.TextEvent;
+import java.awt.event.TextListener;
 
-import br.cefet.control.Resume;
+import br.cefet.vsged.util.Resume;
 
 
 @SuppressWarnings("serial")
-public class Menu extends Applet implements Runnable {
+public class Menu extends Applet implements Runnable, TextListener {
 
 	private Thread t;
 	private static Checkbox drawArrow = null;
@@ -18,7 +21,7 @@ public class Menu extends Applet implements Runnable {
 	private static Checkbox drawsenray = null;
 	private static Checkbox drawnumpoints = null;
 	private static Button start = null;
-	private Label txtTime = null;
+	private TextField txtTime = null;
 	private static int time = 1;
 	private Label lblIndex = null;
 	private Label lblQuantity = null;
@@ -50,7 +53,8 @@ public class Menu extends Applet implements Runnable {
 		drawsenray = new Checkbox("exibir raio de cobertura");
 		drawnumpoints = new Checkbox("exibir pontos numerados", true);
 		start = new Button(" |> ");
-		txtTime = new Label();
+		txtTime = new TextField();
+		txtTime.addTextListener(this);
 		lblIndex = new Label();
 		lblQuantity = new Label();
 		lblStartEnergy = new Label();
@@ -95,14 +99,14 @@ public class Menu extends Applet implements Runnable {
 	}
 
 	public void run() {
-		while (true) {
+		//while (true) {
 			repaint();
-		}
+		//}
 	}
 
 	public void update(Graphics g) {
 		super.update(g);
-		repaint();
+		//repaint();
 	}
 
 	public void paint(Graphics g) {
@@ -111,27 +115,29 @@ public class Menu extends Applet implements Runnable {
 		drawcomray.setBounds(10, 40, 220, 15);
 		drawsenray.setBounds(10, 60, 220, 15);
 		drawnumpoints.setBounds(10, 80, 220, 15);
-		txtTime.setBounds(10, 150, 220, 20);
-		init.setBounds(10, 100, 30, 20);
-		previw.setBounds(40, 100, 30, 20);
-		start.setBounds(70, 100, 30, 20);
-		pause.setBounds(100, 100, 30, 20);
-		next.setBounds(130, 100, 30, 20);
-		end.setBounds(160, 100, 30, 20);
 		
-		lblIndex.setBounds(10, 180, 220, 20);
-		lblQuantity.setBounds(10, 200, 220, 20);
-		lblStartEnergy.setBounds(10, 220, 220, 20);
-		lblComunicationRay.setBounds(10, 240, 220, 20);
-		lblSensingRay.setBounds(10, 260, 220, 20);
-		lblPercMin.setBounds(10, 280, 220, 20);
-		lblPercAchieved.setBounds(10, 300, 220, 20);
-		lblFinalTime.setBounds(10, 320, 220, 20);
-		lblFinalBathery.setBounds(10, 340, 220, 20);
+		init.setBounds(10, 100, 40, 20);
+		previw.setBounds(52, 100, 40, 20);
+		next.setBounds(94, 100, 40, 20);
+		end.setBounds(136, 100, 40, 20);
 		
-		batheryLevel.setBounds(10, 360, 220, 20);
-		sensorsLive.setBounds(10, 380, 220, 20);
-		coverage.setBounds(10, 400, 220, 20);
+		txtTime.setBounds(10, 122, 82, 20);
+		start.setBounds(94, 122, 40, 20);
+		pause.setBounds(136, 122, 40, 20);
+		
+		lblIndex.setBounds(10, 160, 220, 20);
+		lblQuantity.setBounds(10, 180, 220, 20);
+		lblStartEnergy.setBounds(10, 200, 220, 20);
+		lblComunicationRay.setBounds(10, 220, 220, 20);
+		lblSensingRay.setBounds(10, 240, 220, 20);
+		lblPercMin.setBounds(10, 260, 220, 20);
+		lblPercAchieved.setBounds(10, 280, 220, 20);
+		lblFinalTime.setBounds(10, 300, 220, 20);
+		lblFinalBathery.setBounds(10, 320, 220, 20);
+		
+		batheryLevel.setBounds(10, 340, 180, 20);
+		sensorsLive.setBounds(10, 362, 180, 20);
+		coverage.setBounds(10, 384, 180, 20);
 		
 		lblIndex.setText(Resume.getStrIndex());
 		lblQuantity.setText(Resume.getStrQuantity());
@@ -278,5 +284,9 @@ public class Menu extends Applet implements Runnable {
 	public static void setEnd(Button end) {
 		Menu.end = end;
 	}
-	
+
+	@Override
+	public void textValueChanged(TextEvent e) {
+		repaint();
+	}
 }

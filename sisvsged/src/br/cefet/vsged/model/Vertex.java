@@ -1,10 +1,10 @@
-package br.cefet.model;
+package br.cefet.vsged.model;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
-import br.cefet.control.Box;
-import br.cefet.view.Menu;
+import br.cefet.vsged.util.Box;
+import br.cefet.vsged.view.Menu;
 
 
 public class Vertex {

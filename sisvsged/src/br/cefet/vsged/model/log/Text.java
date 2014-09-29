@@ -1,4 +1,4 @@
-package br.cefet.model.log;
+package br.cefet.vsged.model.log;
 
 public class Text {
 

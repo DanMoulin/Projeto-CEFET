@@ -1,4 +1,4 @@
-package br.cefet.control;
+package br.cefet.vsged.util;
 
 
 public class Resume {
@@ -43,8 +43,8 @@ public class Resume {
 		strStartEnergy = "Energia inicial: 3000";
 		strComunicationRay = "Raio de Comunicacao: " + comunicationRay;
 		strSensingRay = "Raio de Sensoriamento: " + sensingRay;
-		strPercMin = "Percentual de Cobertura minimo: 90";
-		strPercAchieved = "Percentual de Cobertura atingido: " + achieved;
+		strPercMin = "Cobertura minima: 90%";
+		strPercAchieved = "Cobertura atingido: " + achieved + "%";
 		strFinalTime = "Tempo de vida util da rede: " + finalTime;
 		strFinalBathery = "Energia residual total da rede: " + finalBathery;
 	}

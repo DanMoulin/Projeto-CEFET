@@ -1,4 +1,4 @@
-package br.cefet.model;
+package br.cefet.vsged.model;
 
 import java.awt.Color;
 

@@ -1,10 +1,10 @@
-package br.cefet.control;
+package br.cefet.vsged.util;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import br.cefet.model.Adjacency;
+import br.cefet.vsged.model.Adjacency;
 
 
 public class BreadthFirstSearch {
