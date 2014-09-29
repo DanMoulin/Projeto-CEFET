@@ -30,7 +30,7 @@ import br.cefet.model.log.Text;
 @SuppressWarnings("serial")
 public class Main extends Applet implements Runnable, ItemListener,
 		ActionListener {
-
+//teste
 	private Thread t;
 	private ArrayList<Vertex> vertex = new ArrayList<Vertex>();
 	private int[] xPositions;
