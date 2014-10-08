@@ -557,6 +557,18 @@ public class Main extends Applet implements Runnable, ItemListener,
 			}
 		}
 	}
+	
+	public void callServlet(int act, String title, String rowKey, String info) {
+		title = title.replace(" ", "-");
+		rowKey = rowKey.replace(" ", "-");
+		try {
+	        URL servlet = new URL("http://localhost:8080/sisvsged/ServletGraphic?act="+act+"&title="+title+"&rk="+rowKey+"&gd="+info);
+	        URLConnection servletConnection = servlet.openConnection();
+	        servletConnection.getInputStream();
+		}catch (Exception e) {
+	        System.out.println(e.toString());
+	    }
+	}
 
 	public void itemStateChanged(ItemEvent e) {
 		repaint();
@@ -649,33 +661,13 @@ public class Main extends Applet implements Runnable, ItemListener,
 			repaint();
 		}
 		else if(ae.getActionCommand() == "Gráfico de nivel de bateria") {
-			//---- metodo
-			try {
-		        URL servlet = new URL("http://localhost:8080/sisvsged/ServletGraphic?act=1&title=Gráfico-de-nível-de-bateria&rk=bateria-total&gd="+batheryData);
-		        URLConnection servletConnection = servlet.openConnection();
-		        servletConnection.getInputStream();
-			}catch (Exception e) {
-		        System.out.println(e.toString());
-		    }
-			//----
+			callServlet(1, "Gráfico de nível de bateria", "bateria total", batheryData);
 		}
 		else if(ae.getActionCommand() == "Gráfico de vida útil de sensores") {
-			try {
-		        URL servlet = new URL("http://localhost:8080/sisvsged/ServletGraphic?act=1&title=Gráfico-de-vida-útil-de-sensores&rk=sensores-ativos&gd="+liveSensorData);
-		        URLConnection servletConnection = servlet.openConnection();
-		        servletConnection.getInputStream();
-			}catch (Exception e) {
-		        System.out.println(e.toString());
-		    }
+			callServlet(1, "Gráfico de vida útil de sensores", "sensores ativos", liveSensorData);
 		}
 		else if(ae.getActionCommand() == "Gráfico de cobertura") {
-			try {
-		        URL servlet = new URL("http://localhost:8080/sisvsged/ServletGraphic?act=1&title=Gráfico-de-cobertura&rk=cobertura-atingida&gd="+coverageData);
-		        URLConnection servletConnection = servlet.openConnection();
-		        servletConnection.getInputStream();
-			}catch (Exception e) {
-		        System.out.println(e.toString());
-		    }
+			callServlet(1, "Gráfico de cobertura", "cobertira atingida", coverageData);
 		}
 	}
 	
