@@ -11,11 +11,13 @@ import java.awt.event.ItemListener;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
 
 import br.cefet.vsged.model.Adjacency;
 import br.cefet.vsged.model.Distance;
+import br.cefet.vsged.model.Package;
 import br.cefet.vsged.model.Vertex;
 import br.cefet.vsged.model.log.Caretaker;
 import br.cefet.vsged.model.log.Text;
@@ -37,7 +39,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 	private int[] yPositions;
 	private int quantity;
 	private int[] houteringTree;
-	private int[] packages; // dados sensoriados e recebidos dos pontos
+	//private int[] packages; // dados sensoriados e recebidos dos pontos
 	private int finalTime = 0;
 	private int finalBathery = 0;
 	private Distance matrizDistance;
@@ -62,10 +64,10 @@ public class Main extends Applet implements Runnable, ItemListener,
 		
 		houteringTree = returnsArrayOfIntegers(getParameter("arrows").split("-"));
 		
-		packages = new int[quantity + 1];
+		/*packages = new int[quantity + 1];
 		for (int i = 0; i < packages.length; i++) {
 			packages[i] = 0;
-		}
+		}*/
 		Menu.setTime(0);
 		// inicializa ponto--talvez metodo
 		Vertex s = new Vertex(xPositions[0] + Box.getBorder(), yPositions[0] + Box.getBorder());
@@ -130,7 +132,62 @@ public class Main extends Applet implements Runnable, ItemListener,
 
 			repaint();
 			
-			for (int k = 1; k < packages.length; k++) {
+			//------------------------------------------------------------------------------------
+			//------------------------------------------------------------------------------------
+			//------------------------------------------------------------------------------------
+			
+			for (int k = 1; k < vertex.size(); k++) {
+				//verifica se o sensor foi desativado
+				if (Probability.pointNotWorks())
+					vertex.get(k).setActivate(false);
+				//verifica se o vertice possui pacotes a enviar e se tem bateria--possivel metodo
+				if (vertex.get(k).getPackages().size() != 0 && vertex.get(k).getBathery() > 13 && vertex.get(k).isActivate())
+					for (int j = 0; j < houteringTree.length; j += 2) {
+						if (houteringTree[j] == k) {//localiza o vertice no array da arvore
+							//verifica se o vertice de destino não é o sink e se esta ativado--possivel metodo
+							if (houteringTree[j + 1] != 0 && vertex.get(houteringTree[j + 1]).isActivate()) {
+								// *** deve ser (13 * packages[k])
+								while (true) {
+									//se o vertive de horigem não tiver pacotes ou bateria e se o vertice de destino não tiver bateria, sai do loop
+									if (vertex.get(k).getPackages().size() == 0 || vertex.get(k).getBathery() <= 13 || vertex.get(houteringTree[j + 1]).getBathery() <= 2)
+										break;
+									//se o pacote for perdido o vertice de destino mantem a bateria e a quantidade de pacotes atual
+									else if (Probability.packageLost()) {
+										vertex.get(k).getPackages().poll();
+										vertex.get(k).setBathery(13);
+									} else {//se estiver tudo ok o procedimento e normal
+										vertex.get(houteringTree[j + 1]).getPackages().add(vertex.get(k).getPackages().poll());
+										vertex.get(k).setBathery(13);
+										vertex.get(houteringTree[j + 1]).setBathery(2);
+									}
+								}
+							} else {//se o vertice de destino for o sink ou estiver desativado entra aqui
+								if (houteringTree[j + 1] == 0) {
+									//este loop é muito parecido com o da condição anterior, a unica diferença é que não é necessario 
+									//diminuir a bateria do vertice de destino pois ele é o sink
+									while (true) {
+										if (vertex.get(k).getPackages().size() == 0 || vertex.get(k).getBathery() <= 13)
+											break;
+										else if (Probability.packageLost()) {
+											vertex.get(k).getPackages().poll();
+											vertex.get(k).setBathery(13);
+										} else {
+											vertex.get(houteringTree[j + 1]).getPackages().add(vertex.get(k).getPackages().poll());
+											vertex.get(k).setBathery(13);
+										}
+									}
+								}
+							}
+						}
+					}
+			}
+			
+			//------------------------------------------------------------------------------------
+			//------------------------------------------------------------------------------------
+			//------------------------------------------------------------------------------------
+			
+			
+			/*for (int k = 1; k < packages.length; k++) {
 				//verifica se o sensor foi desativado
 				if (Probability.pointNotWorks())
 					vertex.get(k).setActivate(false);
@@ -185,7 +242,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 							}
 						}
 					}
-			}
+			}*/
 
 			//insertLog();
 			
@@ -227,8 +284,8 @@ public class Main extends Applet implements Runnable, ItemListener,
 				Menu.setTime(Menu.getTime() + 1);
 				
 				//insere novos pacotes
-				for (int i = 1; i < packages.length; i++) {
-					packages[i] += 1;
+				for (int i = 1; i < vertex.size(); i++) {
+					vertex.get(i).getPackages().add(new Package());
 				}
 				insertLog();
 				
@@ -277,11 +334,11 @@ public class Main extends Applet implements Runnable, ItemListener,
 				// exibe caixa de mensagem
 				JOptionPane.showMessageDialog(null,
 						"Simulação terminada!\nDados recebidos pelo sink: "
-								+ packages[0] + "\nEnergia residual: " + temp
+								+ vertex.get(0).getPackages().size() + "\nEnergia residual: " + temp
 								+ "\nTempo: " + Menu.getTime());
 				// setar pacotes -- metodo
-				for (int i = 0; i < packages.length; i++) {
-					packages[i] = 0;
+				for (int i = 0; i < vertex.size(); i++) {
+					vertex.get(i).setPackages(new LinkedList<Package>());
 				}
 				// setar vertices -- metodo
 				for (int i = 1; i < vertex.size(); i++) {
@@ -317,7 +374,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 			text += i + "-";
 			text += vertex.get(i).isActivate() + "-";
 			text += vertex.get(i).getBathery() + "-";
-			text += packages[i];
+			text += vertex.get(i).getPackages().size();
 			if(i!= quantity)
 				text += "-";
 		}
@@ -326,12 +383,14 @@ public class Main extends Applet implements Runnable, ItemListener,
 	}
 	private void retrieveLog(int index) {
 		String[] a = log.get(index).getText().split("-");
-		packages[Integer.valueOf(a[0])] = Integer.valueOf(a[3]);
+		while(vertex.get(Integer.valueOf(a[0])).getPackages().size() < Integer.valueOf(a[3]))
+			vertex.get(Integer.valueOf(a[0])).getPackages().add(new Package());
 		//-----
 		for (int i = 4; i < a.length; i+=4) {
 			vertex.get(Integer.valueOf(a[i])).setActivate(Boolean.valueOf(a[i+1]));
 			vertex.get(Integer.valueOf(a[i])).resetBathery(Integer.valueOf(a[i+2]));
-			packages[Integer.valueOf(a[i])] = Integer.valueOf(a[i+3]);
+			while(vertex.get(Integer.valueOf(a[i])).getPackages().size() < Integer.valueOf(a[i+3]))
+				vertex.get(Integer.valueOf(a[i])).getPackages().add(new Package());
 		}
 		//-----
 	}
@@ -426,25 +485,25 @@ public class Main extends Applet implements Runnable, ItemListener,
 			//g.fillRect(xPositions[0] + Box.getBorder(), yPositions[0] + Box.getBorder(), 10, 10);
 			// dados recebidos pelo sink
 		//---- metodo
-			if (packages[0] != 0 && (Menu.isStartedSimulation() || check)) {
+			if (vertex.get(0).getPackages().size() != 0 && (Menu.isStartedSimulation() || check)) {
 				g.setColor(Color.orange);
-				if (packages[0] < 10){
+				if (vertex.get(0).getPackages().size() < 10){
 					g.fillRect(Box.getBorder(), 11 + Box.getBorder(), 8, 12);
 					g.setColor(Color.black);
 					g.drawRect(Box.getBorder(), 11 + Box.getBorder(), 8, 12);
 				}
-				else if (packages[0] < 100){
+				else if (vertex.get(0).getPackages().size() < 100){
 					g.fillRect(Box.getBorder(), 11 + Box.getBorder(), 15, 12);
 					g.setColor(Color.black);
 					g.drawRect(Box.getBorder(), 11 + Box.getBorder(), 15, 12);
 				}
-				else if (packages[0] < 1000){
+				else if (vertex.get(0).getPackages().size() < 1000){
 					g.fillRect(Box.getBorder(), 11 + Box.getBorder(), 22, 12);
 					g.setColor(Color.black);
 					g.drawRect(Box.getBorder(), 11 + Box.getBorder(), 22, 12);
 				}
 				
-				g.drawString("" + packages[0] + "", 1 + Box.getBorder(), 22 + Box.getBorder());
+				g.drawString("" + vertex.get(0).getPackages().size() + "", 1 + Box.getBorder(), 22 + Box.getBorder());
 			}
 		//----
 			for (int i = 0; i < vertex.size(); i++) {
@@ -554,29 +613,29 @@ public class Main extends Applet implements Runnable, ItemListener,
 
 	public void drawPackages(Graphics g, int i) {
 		// pintar pacotes
-		if (packages[i] != 0 && (Menu.isStartedSimulation() || check)
+		if (vertex.get(i).getPackages().size() != 0 && (Menu.isStartedSimulation() || check)
 				&& vertex.get(i).isActivate()) {
 			int xp = vertex.get(i).getX() - 10;
 			int yp = vertex.get(i).getY() + 10;
 			
 			g.setColor(Color.orange);
-			if (packages[i] < 10){
+			if (vertex.get(i).getPackages().size() < 10){
 				g.fillRect(xp, yp, 8, 12);
 				g.setColor(Color.black);
 				g.drawRect(xp, yp, 8, 12);
 			}
-			else if (packages[i] < 100){
+			else if (vertex.get(i).getPackages().size() < 100){
 				g.fillRect(xp, yp, 15, 12);
 				g.setColor(Color.black);
 				g.drawRect(xp, yp, 15, 12);
 			}
-			else if (packages[i] < 1000){
+			else if (vertex.get(i).getPackages().size() < 1000){
 				g.fillRect(xp, yp, 22, 12);
 				g.setColor(Color.black);
 				g.drawRect(xp, yp, 22, 12);
 			}
 			
-			g.drawString("" + packages[i] + "", 1 + xp, 11 + yp);
+			g.drawString("" + vertex.get(i).getPackages().size() + "", 1 + xp, 11 + yp);
 			/*
 			for (int j = 1; j <= packages[i]; j++) {
 
@@ -614,9 +673,9 @@ public class Main extends Applet implements Runnable, ItemListener,
 
 				// insere novos pacotes
 				// ---- metodo -- com alterações
-				packages[0] = 0;
-				for (int i = 1; i < packages.length; i++) {
-					packages[i] = 1;
+				vertex.get(0).setPackages(new LinkedList<Package>());
+				for (int i = 1; i < vertex.size(); i++) {
+					vertex.get(i).getPackages().add(new Package());
 				}
 				// ----
 				for (int i = 1; i < vertex.size(); i++) {

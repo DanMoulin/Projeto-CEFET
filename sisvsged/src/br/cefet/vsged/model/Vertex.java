@@ -2,6 +2,8 @@ package br.cefet.vsged.model;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import br.cefet.vsged.util.Box;
 import br.cefet.vsged.view.Menu;
@@ -16,6 +18,7 @@ public class Vertex {
 	private Ray sensing;
 	private boolean activate;
 	private boolean isSink = false;
+	private Queue<Package> packages = new LinkedList<Package>();
 
 	public Vertex(int x, int y, int comuRay, int sensRay, int bathery) {
 		super();
@@ -149,5 +152,13 @@ public class Vertex {
 
 	public boolean isSink() {
 		return isSink;
+	}
+
+	public Queue<Package> getPackages() {
+		return packages;
+	}
+
+	public void setPackages(Queue<Package> packages) {
+		this.packages = packages;
 	}
 }
