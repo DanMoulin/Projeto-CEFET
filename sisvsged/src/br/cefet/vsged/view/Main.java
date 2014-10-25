@@ -428,11 +428,23 @@ public class Main extends Applet implements Runnable, ItemListener,
 		//---- metodo
 			if (packages[0] != 0 && (Menu.isStartedSimulation() || check)) {
 				g.setColor(Color.orange);
-				g.fillRect(11 + Box.getBorder(), 11 + Box.getBorder(), 20, 10);
-				g.setColor(Color.black);
-				g.drawRect(11 + Box.getBorder(), 11 + Box.getBorder(), 20, 10);
+				if (packages[0] < 10){
+					g.fillRect(Box.getBorder(), 11 + Box.getBorder(), 8, 12);
+					g.setColor(Color.black);
+					g.drawRect(Box.getBorder(), 11 + Box.getBorder(), 8, 12);
+				}
+				else if (packages[0] < 100){
+					g.fillRect(Box.getBorder(), 11 + Box.getBorder(), 15, 12);
+					g.setColor(Color.black);
+					g.drawRect(Box.getBorder(), 11 + Box.getBorder(), 15, 12);
+				}
+				else if (packages[0] < 1000){
+					g.fillRect(Box.getBorder(), 11 + Box.getBorder(), 22, 12);
+					g.setColor(Color.black);
+					g.drawRect(Box.getBorder(), 11 + Box.getBorder(), 22, 12);
+				}
 				
-				g.drawString("" + packages[0] + "", 11 + Box.getBorder(), 21 + Box.getBorder());
+				g.drawString("" + packages[0] + "", 1 + Box.getBorder(), 22 + Box.getBorder());
 			}
 		//----
 			for (int i = 0; i < vertex.size(); i++) {
@@ -544,8 +556,28 @@ public class Main extends Applet implements Runnable, ItemListener,
 		// pintar pacotes
 		if (packages[i] != 0 && (Menu.isStartedSimulation() || check)
 				&& vertex.get(i).isActivate()) {
-			int xp = vertex.get(i).getX() + 4;
-			int yp = vertex.get(i).getY() + 4;
+			int xp = vertex.get(i).getX() - 10;
+			int yp = vertex.get(i).getY() + 10;
+			
+			g.setColor(Color.orange);
+			if (packages[i] < 10){
+				g.fillRect(xp, yp, 8, 12);
+				g.setColor(Color.black);
+				g.drawRect(xp, yp, 8, 12);
+			}
+			else if (packages[i] < 100){
+				g.fillRect(xp, yp, 15, 12);
+				g.setColor(Color.black);
+				g.drawRect(xp, yp, 15, 12);
+			}
+			else if (packages[i] < 1000){
+				g.fillRect(xp, yp, 22, 12);
+				g.setColor(Color.black);
+				g.drawRect(xp, yp, 22, 12);
+			}
+			
+			g.drawString("" + packages[i] + "", 1 + xp, 11 + yp);
+			/*
 			for (int j = 1; j <= packages[i]; j++) {
 
 				g.setColor(Color.orange);
@@ -554,7 +586,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 				g.drawRect(xp, yp, 13, 10);
 				xp += 2;
 				yp += 2;
-			}
+			}*/
 		}
 	}
 	
