@@ -346,7 +346,29 @@ public class Main extends Applet implements Runnable, ItemListener,
 	}
 
 	private boolean performBreadthFirstSearch() {
-		// --------- matriz de distancias --------- metodo
+		createMatrizDistance();
+		createMatrizAdjacency();
+
+		return BreadthFirstSearch.getResponse(0, matrizAdjacency);
+	}
+
+	private void createMatrizAdjacency() {
+		matrizAdjacency = new Adjacency(matrizDistance.getSize());
+		for (int i = 0; i < matrizAdjacency.getSize(); i++) {
+			for (int j = 0; j < matrizAdjacency.getSize(); j++) {
+				boolean adjacency;
+				if (matrizDistance.getOneDistance(i, j) != 0
+						&& matrizDistance.getOneDistance(i, j) <= Integer
+								.parseInt(getParameter("comuray")))
+					adjacency = true;
+				else
+					adjacency = false;
+				matrizAdjacency.setOneAdjacency(i, j, adjacency);
+			}
+		}
+	}
+
+	private void createMatrizDistance() {
 		matrizDistance = new Distance(quantity + 1);
 		for (int i = 0; i < matrizDistance.getSize(); i++) {
 			int x1;
@@ -385,24 +407,6 @@ public class Main extends Applet implements Runnable, ItemListener,
 				matrizDistance.setOneDistance(i, j, distance);
 			}
 		}
-		// ---------------------------------------
-		// -------- matriz de adjacência --------- metodo
-		matrizAdjacency = new Adjacency(matrizDistance.getSize());
-		for (int i = 0; i < matrizAdjacency.getSize(); i++) {
-			for (int j = 0; j < matrizAdjacency.getSize(); j++) {
-				boolean adjacency;
-				if (matrizDistance.getOneDistance(i, j) != 0
-						&& matrizDistance.getOneDistance(i, j) <= Integer
-								.parseInt(getParameter("comuray")))
-					adjacency = true;
-				else
-					adjacency = false;
-				matrizAdjacency.setOneAdjacency(i, j, adjacency);
-			}
-		}
-		// ---------------------------------------
-
-		return BreadthFirstSearch.getResponse(0, matrizAdjacency);
 	}
 
 	public void paint(Graphics g) {
@@ -637,7 +641,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 				log = new Caretaker(new ArrayList<Text>());
 				insertLog();
 
-				JOptionPane.showMessageDialog(null, "Simulação iniciada !");
+				//JOptionPane.showMessageDialog(null, "Simulação iniciada !");
 				// ----grafico de nivel de bateria
 				//---- metodo
 				int bt = 0;
