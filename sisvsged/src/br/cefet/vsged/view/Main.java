@@ -24,8 +24,8 @@ import br.cefet.vsged.model.log.Text;
 import br.cefet.vsged.util.Arrow;
 import br.cefet.vsged.util.Box;
 import br.cefet.vsged.util.BreadthFirstSearch;
-import br.cefet.vsged.util.Probability;
 import br.cefet.vsged.util.Resume;
+import br.cefet.vsged.util.Simulation;
 import br.cefet.vsged.util.ToolTip;
 
 
@@ -132,59 +132,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 
 			repaint();
 			
-			//------------------------------------------------------------------------------------
-			//------------------------------------------------------------------------------------
-			//------------------------------------------------------------------------------------
-			
-			for (int k = 1; k < vertex.size(); k++) {
-				//verifica se o sensor foi desativado
-				if (Probability.pointNotWorks())
-					vertex.get(k).setActivate(false);
-				//verifica se o vertice possui pacotes a enviar e se tem bateria--possivel metodo
-				if (vertex.get(k).getPackages().size() != 0 && vertex.get(k).getBathery() > 13 && vertex.get(k).isActivate())
-					for (int j = 0; j < houteringTree.length; j += 2) {
-						if (houteringTree[j] == k) {//localiza o vertice no array da arvore
-							//verifica se o vertice de destino não é o sink e se esta ativado--possivel metodo
-							if (houteringTree[j + 1] != 0 && vertex.get(houteringTree[j + 1]).isActivate()) {
-								// *** deve ser (13 * packages[k])
-								while (true) {
-									//se o vertive de horigem não tiver pacotes ou bateria e se o vertice de destino não tiver bateria, sai do loop
-									if (vertex.get(k).getPackages().size() == 0 || vertex.get(k).getBathery() <= 13 || vertex.get(houteringTree[j + 1]).getBathery() <= 2)
-										break;
-									//se o pacote for perdido o vertice de destino mantem a bateria e a quantidade de pacotes atual
-									else if (Probability.packageLost()) {
-										vertex.get(k).getPackages().poll();
-										vertex.get(k).setBathery(13);
-									} else {//se estiver tudo ok o procedimento e normal
-										vertex.get(houteringTree[j + 1]).getPackages().add(vertex.get(k).getPackages().poll());
-										vertex.get(k).setBathery(13);
-										vertex.get(houteringTree[j + 1]).setBathery(2);
-									}
-								}
-							} else {//se o vertice de destino for o sink ou estiver desativado entra aqui
-								if (houteringTree[j + 1] == 0) {
-									//este loop é muito parecido com o da condição anterior, a unica diferença é que não é necessario 
-									//diminuir a bateria do vertice de destino pois ele é o sink
-									while (true) {
-										if (vertex.get(k).getPackages().size() == 0 || vertex.get(k).getBathery() <= 13)
-											break;
-										else if (Probability.packageLost()) {
-											vertex.get(k).getPackages().poll();
-											vertex.get(k).setBathery(13);
-										} else {
-											vertex.get(houteringTree[j + 1]).getPackages().add(vertex.get(k).getPackages().poll());
-											vertex.get(k).setBathery(13);
-										}
-									}
-								}
-							}
-						}
-					}
-			}
-			
-			//------------------------------------------------------------------------------------
-			//------------------------------------------------------------------------------------
-			//------------------------------------------------------------------------------------
+			Simulation.packageTransference(vertex, houteringTree);
 			
 			
 			/*for (int k = 1; k < packages.length; k++) {
@@ -383,12 +331,14 @@ public class Main extends Applet implements Runnable, ItemListener,
 	}
 	private void retrieveLog(int index) {
 		String[] a = log.get(index).getText().split("-");
+		vertex.get(Integer.valueOf(a[0])).setPackages(new LinkedList<Package>());
 		while(vertex.get(Integer.valueOf(a[0])).getPackages().size() < Integer.valueOf(a[3]))
 			vertex.get(Integer.valueOf(a[0])).getPackages().add(new Package());
 		//-----
 		for (int i = 4; i < a.length; i+=4) {
 			vertex.get(Integer.valueOf(a[i])).setActivate(Boolean.valueOf(a[i+1]));
 			vertex.get(Integer.valueOf(a[i])).resetBathery(Integer.valueOf(a[i+2]));
+			vertex.get(Integer.valueOf(a[i])).setPackages(new LinkedList<Package>());
 			while(vertex.get(Integer.valueOf(a[i])).getPackages().size() < Integer.valueOf(a[i+3]))
 				vertex.get(Integer.valueOf(a[i])).getPackages().add(new Package());
 		}
