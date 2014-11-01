@@ -1,10 +1,7 @@
 package br.cefet.vsged.servlet;
 
-import java.awt.Desktop;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -46,11 +43,11 @@ public class ServletGraphic extends HttpServlet {
 		graphicData = request.getParameter("gd").split("-");
 		title = request.getParameter("title").replace("-", " ");
 		rowKey = request.getParameter("rk").replace("-", " ");
-		try {
+		/*try {
 			Desktop.getDesktop().browse(new URI("http://localhost:8080/sisvsged/graphic.jsp"));
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	protected void createGraphic(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -42,6 +42,7 @@ public class Menu extends Applet implements Runnable, TextListener {
 	private static Button previw = null;
 	private static Button next = null;
 	private static Button end = null;
+	private static Button print = null;
 
 	public void init() {
 		super.init();
@@ -72,6 +73,7 @@ public class Menu extends Applet implements Runnable, TextListener {
 		previw = new Button(" < ");
 		next = new Button(" > ");
 		end = new Button(" >> ");
+		print = new Button("Print");
 
 		add(drawArrow);
 		add(drawcomray);
@@ -96,6 +98,7 @@ public class Menu extends Applet implements Runnable, TextListener {
 		add(previw);
 		add(next);
 		add(end);
+		add(print);
 	}
 
 	public void run() {
@@ -106,7 +109,7 @@ public class Menu extends Applet implements Runnable, TextListener {
 
 	public void update(Graphics g) {
 		super.update(g);
-		//repaint();
+		repaint();
 	}
 
 	public void paint(Graphics g) {
@@ -120,6 +123,7 @@ public class Menu extends Applet implements Runnable, TextListener {
 		previw.setBounds(52, 100, 40, 20);
 		next.setBounds(94, 100, 40, 20);
 		end.setBounds(136, 100, 40, 20);
+		print.setBounds(178, 100, 40, 20);
 		
 		txtTime.setBounds(10, 122, 82, 20);
 		start.setBounds(94, 122, 40, 20);
@@ -283,6 +287,14 @@ public class Menu extends Applet implements Runnable, TextListener {
 
 	public static void setEnd(Button end) {
 		Menu.end = end;
+	}
+
+	public static Button getPrint() {
+		return print;
+	}
+
+	public static void setPrint(Button print) {
+		Menu.print = print;
 	}
 
 	@Override

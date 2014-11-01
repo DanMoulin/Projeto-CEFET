@@ -16,7 +16,7 @@ public class Vertex {
 	private int bathery;
 	private Ray comunication;
 	private Ray sensing;
-	private boolean activate;
+	private boolean activate=false;
 	private boolean isSink = false;
 	private Queue<Package> packages = new LinkedList<Package>();
 
@@ -24,18 +24,18 @@ public class Vertex {
 		super();
 		this.x = x;
 		this.y = y;
-		if (!isSink) {
+		//if (!isSink) {
 			this.bathery = bathery;
 			comunication = new Ray(comuRay, new Color(.7f, 0f, 0f, .12f));
 			sensing = new Ray(sensRay, new Color(0f, .5f, 0f, .12f));
 			activate = true;
-		} else {
-			this.bathery = 0;
-			comunication = null;
-			sensing = null;
-			activate = false;
-			isSink = true;
-		}
+//		} else {
+//			this.bathery = 0;
+//			comunication = null;
+//			sensing = null;
+//			activate = false;
+//			isSink = true;
+//		}
 	}
 
 	public Vertex(int x, int y) {
@@ -62,6 +62,14 @@ public class Vertex {
 
 	public int getSensingRay() {
 		return sensing.getRay();
+	}
+
+	public Ray getComunication() {
+		return comunication;
+	}
+
+	public Ray getSensing() {
+		return sensing;
 	}
 
 	public void drawComunicationRay(Graphics g) {

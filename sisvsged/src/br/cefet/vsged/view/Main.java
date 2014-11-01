@@ -1,6 +1,7 @@
 package br.cefet.vsged.view;
 
 import java.applet.Applet;
+import java.applet.AppletContext;
 import java.awt.Color;
 import java.awt.Event;
 import java.awt.Graphics;
@@ -8,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -39,7 +41,6 @@ public class Main extends Applet implements Runnable, ItemListener,
 	private int[] yPositions;
 	private int quantity;
 	private int[] houteringTree;
-	//private int[] packages; // dados sensoriados e recebidos dos pontos
 	private int finalTime = 0;
 	private int finalBathery = 0;
 	private Distance matrizDistance;
@@ -64,10 +65,6 @@ public class Main extends Applet implements Runnable, ItemListener,
 		
 		houteringTree = returnsArrayOfIntegers(getParameter("arrows").split("-"));
 		
-		/*packages = new int[quantity + 1];
-		for (int i = 0; i < packages.length; i++) {
-			packages[i] = 0;
-		}*/
 		Menu.setTime(0);
 		// inicializa ponto--talvez metodo
 		Vertex s = new Vertex(xPositions[0] + Box.getBorder(), yPositions[0] + Box.getBorder());
@@ -94,6 +91,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 		Menu.getPreviw().addActionListener(this);
 		Menu.getNext().addActionListener(this);
 		Menu.getEnd().addActionListener(this);
+		Menu.getPrint().addActionListener(this);
 		
 		Resume.atualizaDados(quantity,
 				Integer.parseInt(getParameter("comuray")),
@@ -114,7 +112,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 		ToolTip.setVisible(false);
 	}
 
-	private int[] returnsArrayOfIntegers(String[] split) {
+	public static int[] returnsArrayOfIntegers(String[] split) {
 		int[] temp = new int[split.length];
 		for (int i = 0; i < temp.length; i++) {
 			temp[i] = Integer.parseInt(split[i]);
@@ -133,66 +131,6 @@ public class Main extends Applet implements Runnable, ItemListener,
 			repaint();
 			
 			Simulation.packageTransference(vertex, houteringTree);
-			
-			
-			/*for (int k = 1; k < packages.length; k++) {
-				//verifica se o sensor foi desativado
-				if (Probability.pointNotWorks())
-					vertex.get(k).setActivate(false);
-				//verifica se o vertice possui pacotes a enviar e se tem bateria--possivel metodo
-				if (packages[k] != 0 && vertex.get(k).getBathery() > 13
-						&& vertex.get(k).isActivate())
-					for (int j = 0; j < houteringTree.length; j += 2) {
-						if (houteringTree[j] == k) {//localiza o vertice no array da arvore
-							//verifica se o vertice de destino não é o sink e se esta ativado--possivel metodo
-							if (houteringTree[j + 1] != 0
-									&& vertex.get(houteringTree[j + 1]).isActivate()) {
-								// *** deve ser (13 * packages[k])
-								while (true) {
-									//se o vertive de horigem não tiver pacotes ou bateria
-									//e se o vertice de destino não tiver bateria, sai do loop
-									if (packages[k] == 0
-											|| vertex.get(k).getBathery() <= 13
-											|| vertex.get(houteringTree[j + 1]).getBathery() <= 2)
-										break;
-									//se o pacote for perdido o vertice de horigem mantem a bateria
-									//e a quantidade de pacotes atual
-									else if (Probability.packageLost()) {
-										vertex.get(k).setBathery(13);
-										packages[k] -= 1;
-									} else {//se estiver tudo ok o procedimento e normal
-										vertex.get(k).setBathery(13);
-										vertex.get(houteringTree[j + 1]).setBathery(2);
-										packages[houteringTree[j + 1]] += 1;
-										packages[k] -= 1;
-									}
-								}
-							} else {//se o vertice de destino for o sink ou estiver desativado entra aqui
-								if (houteringTree[j + 1] == 0) {
-									//este loop é muito parecido com o da condição anterior
-									//a unica diferença é que não é necessario diminuir a bateria
-									//do vertice de destino pois ele é o sink
-									while (true) {
-										if (packages[k] == 0
-												|| vertex.get(k)
-														.getBathery() <= 13)
-											break;
-										else if (Probability.packageLost()) {
-											vertex.get(k).setBathery(13);
-											packages[k] -= 1;
-										} else {
-											vertex.get(k).setBathery(13);
-											packages[houteringTree[j + 1]] += 1;
-											packages[k] -= 1;
-										}
-									}
-								}
-							}
-						}
-					}
-			}*/
-
-			//insertLog();
 			
 			// ------------------------------
 			//aqui reune-se os dados que vão ser enviados ao servlet -- metodo
@@ -220,12 +158,6 @@ public class Main extends Applet implements Runnable, ItemListener,
 					verifyBatheryAndActivate = true;
 			}
 			//----
-			/*if (((vertex.get(0).getBathery() > 13 && vertex.get(0).isActivate()) && (vertex
-					.get(1).getBathery() > 13 && vertex.get(1).isActivate()))
-					&& performBreadthFirstSearch()) {*/
-			//vertex.get(10).setActivate(false);
-			//vertex.get(7).setActivate(false);
-			//vertex.get(9).setActivate(false);
 			
 			//verifica se a simulação está em condições de prosseguir -- metodo
 			if (!verifyBatheryAndActivate && performBreadthFirstSearch() && getAchievedPercentage() >= 90) {
@@ -294,21 +226,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 					vertex.get(i).setActivate(true);
 				}
 				Menu.setTime(0);
-				/*try {
-			         AppletContext a = getAppletContext();
-			         URL url = new URL("http://localhost:8080/sisvsged/ServletGraphic?batherydata="+batheryData);
-			         a.showDocument(url,"_blank");
-			      }
-			      catch (MalformedURLException e){
-			         System.out.println(e.getMessage());
-			      }*/
-				/*try {
-			        URL servlet = new URL("http://localhost:8080/sisvsged/ServletGraphic?batherydata="+batheryData);
-			        URLConnection servletConnection = servlet.openConnection();
-			        servletConnection.getInputStream();
-				}catch (Exception e) {
-			        System.out.println(e.toString());
-			    }*/
+				
 				repaint();
 			}
 		}
@@ -421,22 +339,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 
 		Box.drawGrid(g);
 		Box.drawBox(g);
-		//if(check) {
-		//	retrieveLog(0);
-			/*String[] a = log.get(0).getText().split("-");
-			packages[Integer.valueOf(a[0])] = Integer.valueOf(a[3]);
-			//-----
-			for (int i = 4; i < a.length; i+=4) {
-				vertex.get(Integer.valueOf(a[i])).setActivate(Boolean.valueOf(a[i+1]));
-				vertex.get(Integer.valueOf(a[i])).resetBathery(Integer.valueOf(a[i+2]));
-				packages[Integer.valueOf(a[i])] = Integer.valueOf(a[i+3]);
-			}*/
-			//-----
-		//}
-		//if(!check) {
-			// sink
-			//g.setColor(Color.blue);
-			//g.fillRect(xPositions[0] + Box.getBorder(), yPositions[0] + Box.getBorder(), 10, 10);
+		
 			// dados recebidos pelo sink
 		//---- metodo
 			if (vertex.get(0).getPackages().size() != 0 && (Menu.isStartedSimulation() || check)) {
@@ -467,7 +370,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 			}
 			drawRouteringTree(g);
 			//for (int i = 0; i < vertex.size(); i++)
-			for (int i = vertex.size() - 1; i >= 1; i--) {
+			for (int i = vertex.size() - 1; i >= 0; i--) {
 				vertex.get(i).drawComunicationRay(g);
 				vertex.get(i).drawSensingRay(g);
 				vertex.get(i).drawPoint(g, i);
@@ -476,57 +379,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 			}
 			drawRouteringTree(g);
 			Resume.setAchieved(getAchievedPercentage());
-		/*}
-		else {
-			//JOptionPane.showMessageDialog(null, log.get(0).getText());
-			//JOptionPane.showMessageDialog(null, log.get(1).getText());
-			//JOptionPane.showMessageDialog(null, log.get(2).getText());
-			//int[] a = returnsArrayOfIntegers(log.get(0).getText().split("-"));
-			String[] a = log.get(0).getText().split("-");
-			packages[Integer.valueOf(a[0])] = Integer.valueOf(a[3]);
-			//-----
-			for (int i = 4; i < a.length; i+=4) {
-				vertex.get(Integer.valueOf(a[i])).setActivate(Boolean.valueOf(a[i+1]));
-				vertex.get(Integer.valueOf(a[i])).resetBathery(Integer.valueOf(a[i+2]));
-				packages[Integer.valueOf(a[i])] = Integer.valueOf(a[i+3]);
-			}
-			//-----
-			for (int i = 0; i < vertex.size(); i++) {
-				vertex.get(i).drawPoint(g, i);
-				drawPackages(g, i);
-				vertex.get(i).drawBathery(g);
-			}
-			/*String[] a = log.get(0).getText().split("-"); 
-			ArrayList<Vertex> v2 = vertex;
-			int[] p2 = packages;
-			p2[Integer.valueOf(a[0])] = Integer.valueOf(a[3]);
-			for (int i = 4; i <= a.length; i+=4) {
-				v2.get(Integer.valueOf(a[i])).setActivate(Boolean.valueOf(a[i+1]));
-				v2.get(Integer.valueOf(a[i])).resetBathery(Integer.valueOf(a[i+2]));
-				p2[Integer.valueOf(a[i])] = Integer.valueOf(a[i+3]);
-			}
-			for (int i = 0; i < v2.size(); i++) {
-				v2.get(i).drawComunicationRay(g);
-				v2.get(i).drawSensingRay(g);
-				v2.get(i).drawPoint(g, i);
-				//---
-				if (p2[i] != 0 && v2.get(i).isActivate()) {
-					int xp = v2.get(i).getX() + 4;
-					int yp = v2.get(i).getY() + 4;
-					for (int j = 1; j <= p2[i]; j++) {
-
-						g.setColor(Color.orange);
-						g.fillRect(xp, yp, 13, 10);
-						g.setColor(Color.black);
-						g.drawRect(xp, yp, 13, 10);
-						xp += 2;
-						yp += 2;
-					}
-				}
-				//---
-				v2.get(i).drawBathery(g);
-			}
-		}*/
+		
 	}
 
 	public float getAchievedPercentage() {
@@ -613,6 +466,15 @@ public class Main extends Applet implements Runnable, ItemListener,
 		}catch (Exception e) {
 	        System.out.println(e.toString());
 	    }
+
+		String link = "http://localhost:8080/sisvsged/graphic.jsp";
+		try {
+			AppletContext a = getAppletContext();
+			URL url = new URL(link);
+			a.showDocument(url, "_blank");
+		} catch (MalformedURLException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	public void itemStateChanged(ItemEvent e) {
@@ -629,6 +491,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 				// ---- metodo -- com alterações
 				vertex.get(0).setPackages(new LinkedList<Package>());
 				for (int i = 1; i < vertex.size(); i++) {
+					vertex.get(i).setPackages(new LinkedList<Package>());
 					vertex.get(i).getPackages().add(new Package());
 				}
 				// ----
@@ -705,6 +568,38 @@ public class Main extends Applet implements Runnable, ItemListener,
 			retrieveLog(index);
 			repaint();
 		}
+		else if(ae.getActionCommand() == "Print"){
+			String text = "";
+			for (int i = 0; i < vertex.size(); i++) {
+				text += i + "-";
+				text += vertex.get(i).isActivate() + "-";
+				text += vertex.get(i).getBathery() + "-";
+				text += vertex.get(i).getPackages().size();
+				if(i!= quantity)
+					text += "-";
+			}
+
+			boolean psp = false;
+			if(Menu.isStartedSimulation() || check)
+				psp = true;
+			
+			String link = "http://localhost:8080/sisvsged/ServletImage?tx="
+					+ text + "&xpo=" + getParameter("x") + "&ypo="
+					+ getParameter("y") + "&ht=" + getParameter("arrows")
+					+ "&comu=" + getParameter("comuray") + "&sens="
+					+ getParameter("sensray") + "&psp=" + psp + "&prt="
+					+ Menu.getDrawArrow().getState() + "&pcr="
+					+ Menu.getDrawcomray().getState() + "&psr="
+					+ Menu.getDrawsenray().getState() + "&pnp="
+					+ Menu.getDrawnumpoints().getState();
+			try {
+				AppletContext a = getAppletContext();
+				URL url = new URL(link);
+				a.showDocument(url, "_blank");
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		}
 		else if(ae.getActionCommand() == "Gráfico de nivel de bateria") {
 			callServlet(1, "Gráfico de nível de bateria", "bateria total", batheryData);
 		}
@@ -715,7 +610,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 			callServlet(1, "Gráfico de cobertura", "cobertira atingida", coverageData);
 		}
 	}
-	
+
 	@Override
 	@Deprecated
 	public boolean mouseMove(Event e, int x, int y) {
