@@ -185,14 +185,15 @@ public class ServletImage extends HttpServlet {
 						x[houteringTree[i + 1]] + Box.getBorder(),
 						y[houteringTree[i + 1]] + Box.getBorder());
 			}
-		
+		g.setColor(Color.gray);
+		g.drawString("Powered by VSGED", width - (16 * 7), height - 3);
 		OutputStream out = null;
 
 		response.setContentType("image/png");
         try {
             out = response.getOutputStream();
             // Escreve a imagem no outputstream da response no formato png
-    		response.setHeader("Content-Disposition", "attachment; filename=imagem.png");
+    		response.setHeader("Content-Disposition", "attachment; filename=vsged_graph.png");
             ImageIO.write(buffer, "png", out);
         }catch(Exception e){
         	e.printStackTrace();
