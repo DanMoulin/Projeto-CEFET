@@ -92,6 +92,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 		Menu.getNext().addActionListener(this);
 		Menu.getEnd().addActionListener(this);
 		Menu.getPrint().addActionListener(this);
+		Menu.getGo().addActionListener(this);
 		
 		Resume.atualizaDados(quantity,
 				Integer.parseInt(getParameter("comuray")),
@@ -550,7 +551,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 				index = 0;
 			else {
 				Menu.setTime(Menu.getTime() - 1);
-				index = Menu.getTime();
+				index = Menu.getTime() - 1;
 			}
 			retrieveLog(index);
 			repaint();
@@ -563,7 +564,24 @@ public class Main extends Applet implements Runnable, ItemListener,
 				index = finalTime - 1;
 			else {
 				Menu.setTime(Menu.getTime() + 1);
-				index = Menu.getTime();
+				index = Menu.getTime() - 1;
+			}
+			retrieveLog(index);
+			repaint();
+		}
+		else if (ae.getActionCommand() == "Ok") {
+			check = true;
+			int index;
+			if(Menu.getTime() <= 1){
+				index = 0;
+				Menu.setTime(index + 1);
+			}
+			else if(Menu.getTime() >= (finalTime)){
+				index = finalTime - 1;
+				Menu.setTime(index + 1);
+			}
+			else {
+				index = Menu.getTime() - 1;
 			}
 			retrieveLog(index);
 			repaint();

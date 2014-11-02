@@ -6,6 +6,8 @@ import java.awt.Checkbox;
 import java.awt.Graphics;
 import java.awt.Label;
 import java.awt.TextField;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 
@@ -13,7 +15,7 @@ import br.cefet.vsged.util.Resume;
 
 
 @SuppressWarnings("serial")
-public class Menu extends Applet implements Runnable, TextListener {
+public class Menu extends Applet implements Runnable, TextListener, FocusListener {
 
 	private Thread t;
 	private static Checkbox drawArrow = null;
@@ -21,7 +23,7 @@ public class Menu extends Applet implements Runnable, TextListener {
 	private static Checkbox drawsenray = null;
 	private static Checkbox drawnumpoints = null;
 	private static Button start = null;
-	private TextField txtTime = null;
+	private static TextField txtTime = null;
 	private static int time = 1;
 	private Label lblIndex = null;
 	private Label lblQuantity = null;
@@ -43,6 +45,8 @@ public class Menu extends Applet implements Runnable, TextListener {
 	private static Button next = null;
 	private static Button end = null;
 	private static Button print = null;
+	private boolean test = true;
+	private static Button go = null;
 
 	public void init() {
 		super.init();
@@ -56,6 +60,7 @@ public class Menu extends Applet implements Runnable, TextListener {
 		start = new Button(" |> ");
 		txtTime = new TextField();
 		txtTime.addTextListener(this);
+		txtTime.addFocusListener(this);
 		lblIndex = new Label();
 		lblQuantity = new Label();
 		lblStartEnergy = new Label();
@@ -74,6 +79,7 @@ public class Menu extends Applet implements Runnable, TextListener {
 		next = new Button(" > ");
 		end = new Button(" >> ");
 		print = new Button("Print");
+		go = new Button("Ok");
 
 		add(drawArrow);
 		add(drawcomray);
@@ -99,17 +105,18 @@ public class Menu extends Applet implements Runnable, TextListener {
 		add(next);
 		add(end);
 		add(print);
+		add(go);
 	}
 
 	public void run() {
-		//while (true) {
+		while (test) {
 			repaint();
-		//}
+		}
 	}
 
 	public void update(Graphics g) {
 		super.update(g);
-		repaint();
+		paint(g);
 	}
 
 	public void paint(Graphics g) {
@@ -126,8 +133,9 @@ public class Menu extends Applet implements Runnable, TextListener {
 		print.setBounds(178, 100, 40, 20);
 		
 		txtTime.setBounds(10, 122, 82, 20);
-		start.setBounds(94, 122, 40, 20);
-		pause.setBounds(136, 122, 40, 20);
+		go.setBounds(94, 122, 40, 20);
+		start.setBounds(136, 122, 40, 20);
+		pause.setBounds(178, 122, 40, 20);
 		
 		lblIndex.setBounds(10, 160, 220, 20);
 		lblQuantity.setBounds(10, 180, 220, 20);
@@ -154,9 +162,9 @@ public class Menu extends Applet implements Runnable, TextListener {
 		lblFinalBathery.setText(Resume.getStrFinalBathery());
 
 		if (Menu.time != 0) {
-			txtTime.setText("Tempo: " + Menu.time);
+			txtTime.setText("" + Menu.time);
 		} else {
-			txtTime.setText("Tempo: ");
+			txtTime.setText("");
 		}
 		//repaint();
 	}
@@ -207,6 +215,10 @@ public class Menu extends Applet implements Runnable, TextListener {
 
 	public static void setTime(int time) {
 		Menu.time = time;
+	}
+
+	public static TextField getTxtTime() {
+		return txtTime;
 	}
 
 	public static boolean isStartedSimulation() {
@@ -297,8 +309,31 @@ public class Menu extends Applet implements Runnable, TextListener {
 		Menu.print = print;
 	}
 
+	public static Button getGo() {
+		return go;
+	}
+
+	public static void setGo(Button go) {
+		Menu.go = go;
+	}
+
 	@Override
 	public void textValueChanged(TextEvent e) {
+		if(Menu.isStartedSimulation() || test)
+			repaint();
+		if(!test)
+			time = Integer.valueOf(Menu.getTxtTime().getText());
+	}
+
+	@Override
+	public void focusGained(FocusEvent e) {
+		if(!Menu.isStartedSimulation())
+			test = false;
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		test = true;
 		repaint();
 	}
 }
