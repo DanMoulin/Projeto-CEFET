@@ -9,6 +9,7 @@ public class Resume {
 	private static int finalTime;
 	private static int finalBathery;
 	private static float achieved = 0;
+	private static float minimumPercentage = 0;
 	
 	private static String strIndex;
 	private static String strQuantity;
@@ -21,12 +22,13 @@ public class Resume {
 	private static String strFinalBathery;
 
 	public static void atualizaDados(int quantity, int comunicationRay,
-			int sensingRay, int finalTime, int finalBathery) {
+			int sensingRay, int finalTime, int finalBathery, float minimumpercentage) {
 		Resume.quantity = quantity;
 		Resume.comunicationRay = comunicationRay;
 		Resume.sensingRay = sensingRay;
 		Resume.finalTime = finalTime;
 		Resume.finalBathery = finalBathery;
+		Resume.minimumPercentage = minimumpercentage;
 		setStrings();
 	}
 	
@@ -43,7 +45,7 @@ public class Resume {
 		strStartEnergy = "Energia inicial: 3000";
 		strComunicationRay = "Raio de Comunicacao: " + comunicationRay;
 		strSensingRay = "Raio de Sensoriamento: " + sensingRay;
-		strPercMin = "Cobertura minima: 90%";
+		strPercMin = "Cobertura minima: " + minimumPercentage + "%";
 		strPercAchieved = "Cobertura atingido: " + achieved + "%";
 		strFinalTime = "Tempo de vida util da rede: " + finalTime;
 		strFinalBathery = "Energia residual total da rede: " + finalBathery;
@@ -83,5 +85,13 @@ public class Resume {
 
 	public static String getStrFinalBathery() {
 		return strFinalBathery;
+	}
+
+	public static float getMinimumPercentage() {
+		return minimumPercentage;
+	}
+
+	public static void setMinimumPercentage(float minimumPercentage) {
+		Resume.minimumPercentage = minimumPercentage;
 	}
 }

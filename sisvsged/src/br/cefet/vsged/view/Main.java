@@ -50,6 +50,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 	private String coverageData = "";
 	private Caretaker log;
 	private boolean check = false;
+	private float minimumPercentage  = 0;
 
 	public void init() {
 		super.init();
@@ -61,7 +62,9 @@ public class Main extends Applet implements Runnable, ItemListener,
 		
 		quantity = Integer.parseInt(getParameter("quant"));
 		Box.setWidth(Integer.parseInt(getParameter("wtela")));
-		Box.setHeight(Integer.parseInt(getParameter("htela")));
+		Box.setHeight(Integer.valueOf(getParameter("htela")));
+		
+		minimumPercentage = Float.parseFloat(getParameter("minprc"));
 		
 		houteringTree = returnsArrayOfIntegers(getParameter("arrows").split("-"));
 		
@@ -97,7 +100,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 		Resume.atualizaDados(quantity,
 				Integer.parseInt(getParameter("comuray")),
 				Integer.parseInt(getParameter("sensray")), finalTime,
-				finalBathery);
+				finalBathery, minimumPercentage);
 
 		performBreadthFirstSearch();
 		
@@ -161,7 +164,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 			//----
 			
 			//verifica se a simulação está em condições de prosseguir -- metodo
-			if (!verifyBatheryAndActivate && performBreadthFirstSearch() && getAchievedPercentage() >= 90) {
+			if (!verifyBatheryAndActivate && performBreadthFirstSearch() && getAchievedPercentage() >= minimumPercentage) {
 				Menu.setTime(Menu.getTime() + 1);
 				
 				//insere novos pacotes
@@ -195,17 +198,17 @@ public class Main extends Applet implements Runnable, ItemListener,
 				Resume.atualizaDados(quantity,
 						Integer.parseInt(getParameter("comuray")),
 						Integer.parseInt(getParameter("sensray")), finalTime,
-						finalBathery);
+						finalBathery, minimumPercentage);
 				Resume.setAchieved(getAchievedPercentage());
 				
 				//verifica se algum evento interrompeu a simulação
 				//----talvez metodo
-				if (!performBreadthFirstSearch() || getAchievedPercentage() < 90) {
+				if (!performBreadthFirstSearch() || getAchievedPercentage() < minimumPercentage) {
 					String string = "Simulação interrompida!\n";
 					for (int i = 1; i < vertex.size(); i++)
 						if (!vertex.get(i).isActivate())
 							string += " - O ponto nº " + i + " apresentou uma falha inesperada;\n";
-					if (getAchievedPercentage() < 90)
+					if (getAchievedPercentage() < minimumPercentage)
 						string += "Percentual de cobertura abaixo do mínimo!";
 					else
 						string += "Conexão com a rede perdida!";
