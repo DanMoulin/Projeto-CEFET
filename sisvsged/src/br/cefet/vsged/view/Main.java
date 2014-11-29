@@ -65,6 +65,8 @@ public class Main extends Applet implements Runnable, ItemListener,
 		Box.setHeight(Integer.valueOf(getParameter("htela")));
 		
 		minimumPercentage = Float.parseFloat(getParameter("minprc"));
+		Simulation.setBatheryToSend(Integer.valueOf(getParameter("btosend")));
+		Simulation.setBatheryToReceive(Integer.valueOf(getParameter("btoreceive")));
 		
 		houteringTree = returnsArrayOfIntegers(getParameter("arrows").split("-"));
 		
@@ -75,7 +77,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 		for (int i = 1; i <= quantity; i++) {
 			Vertex v = new Vertex(xPositions[i] + Box.getBorder(), yPositions[i] + Box.getBorder(),
 					Integer.parseInt(getParameter("comuray")),
-					Integer.parseInt(getParameter("sensray")), 3000);
+					Integer.parseInt(getParameter("sensray")), Integer.valueOf(getParameter("maxbathery")));
 			// inclui ponto no array de pontos
 			vertex.add(v);
 		}
@@ -142,7 +144,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 			int ls = 0;
 			for (int i = 1; i < vertex.size(); i++) {
 				bt += vertex.get(i).getBathery();
-				if(vertex.get(i).isActivate())
+				if(vertex.get(i).isActivate() && vertex.get(i).getBathery() >= Integer.valueOf(getParameter("btosend")))
 					ls++;
 			}
 			batheryData += "" + bt;
@@ -185,7 +187,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 				int temp2 = 0;
 				for (int i = 1; i < vertex.size(); i++) {
 					temp += vertex.get(i).getBathery();
-					if(vertex.get(i).isActivate())
+					if(vertex.get(i).isActivate() && vertex.get(i).getBathery() >= Integer.valueOf(getParameter("btosend")))
 						temp2++;
 				}
 				finalTime = Menu.getTime();
@@ -226,7 +228,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 				}
 				// setar vertices -- metodo
 				for (int i = 1; i < vertex.size(); i++) {
-					vertex.get(i).resetBathery(3000);
+					vertex.get(i).resetBathery(Integer.valueOf(getParameter("maxbathery")));
 					vertex.get(i).setActivate(true);
 				}
 				Menu.setTime(0);
@@ -394,11 +396,8 @@ public class Main extends Applet implements Runnable, ItemListener,
 			for (int j = 10 + Box.getBorder(); j < Box.getHeight() + Box.getBorder(); j += 20) {
 				q++;
 				for (int j2 = 1; j2 < vertex.size(); j2++) {
-					if (vertex.get(j2).isActivate()) {
-						temp = Math.sqrt(Math.pow(j
-								- vertex.get(j2).getY(), 2)
-								+ Math.pow(vertex.get(j2).getX()
-										- i, 2));
+					if (vertex.get(j2).isActivate() && vertex.get(j2).getBathery() >= Integer.valueOf(getParameter("btosend"))) {
+						temp = Math.sqrt(Math.pow(j - vertex.get(j2).getY(), 2) + Math.pow(vertex.get(j2).getX() - i, 2));
 						if (temp <= (Integer.parseInt(getParameter("comuray")) + 8)) {
 							t++;
 							break;
@@ -500,7 +499,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 				}
 				// ----
 				for (int i = 1; i < vertex.size(); i++) {
-					vertex.get(i).resetBathery(3000);
+					vertex.get(i).resetBathery(Integer.valueOf(getParameter("maxbathery")));
 					vertex.get(i).setActivate(true);
 				}
 				Menu.setTime(1);
@@ -515,7 +514,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 				int ls = 0;
 				for (int i = 1; i < vertex.size(); i++) {
 					bt += vertex.get(i).getBathery();
-					if(vertex.get(i).isActivate())
+					if(vertex.get(i).isActivate() && vertex.get(i).getBathery() >= Integer.valueOf(getParameter("btosend")))
 						ls++;
 				}
 				batheryData = "" + bt + "-";
