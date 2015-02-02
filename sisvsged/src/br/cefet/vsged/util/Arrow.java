@@ -6,7 +6,7 @@ import java.awt.Graphics;
 
 public class Arrow {
 
-	private static int al = 15;	// Arrow length
+	private static int al = 10;	// Arrow length
 	private static int aw = 8;		// Arrow width
 	private static int haw = aw/2;	// Half arrow width
 	private static int xValues[] = new int[3];

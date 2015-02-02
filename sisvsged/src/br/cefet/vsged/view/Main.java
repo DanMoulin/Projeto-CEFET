@@ -51,6 +51,8 @@ public class Main extends Applet implements Runnable, ItemListener,
 	private Caretaker log;
 	private boolean check = false;
 	private float minimumPercentage  = 0;
+	private String pauseLog;
+	private int pauseTime = 0;
 
 	public void init() {
 		super.init();
@@ -116,6 +118,11 @@ public class Main extends Applet implements Runnable, ItemListener,
 		add(ToolTip.getReceived());
 		
 		ToolTip.setVisible(false);
+		
+		Menu.getInit().setEnabled(false);
+		Menu.getPreviw().setEnabled(false);
+		Menu.getNext().setEnabled(false);
+		Menu.getEnd().setEnabled(false);
 	}
 
 	public static int[] returnsArrayOfIntegers(String[] split) {
@@ -232,6 +239,11 @@ public class Main extends Applet implements Runnable, ItemListener,
 					vertex.get(i).setActivate(true);
 				}
 				Menu.setTime(0);
+				
+				Menu.getInit().setEnabled(true);
+				Menu.getPreviw().setEnabled(true);
+				Menu.getNext().setEnabled(true);
+				Menu.getEnd().setEnabled(true);
 				
 				repaint();
 			}
@@ -392,8 +404,8 @@ public class Main extends Applet implements Runnable, ItemListener,
 		int t = 0;
 		int q = 0;
 		double temp;
-		for (int i = 10 + Box.getBorder(); i < Box.getWidth() + Box.getBorder(); i += 20) {
-			for (int j = 10 + Box.getBorder(); j < Box.getHeight() + Box.getBorder(); j += 20) {
+		for (int i = 5 + Box.getBorder(); i < Box.getWidth() + Box.getBorder(); i += 10) {
+			for (int j = 5 + Box.getBorder(); j < Box.getHeight() + Box.getBorder(); j += 10) {
 				q++;
 				for (int j2 = 1; j2 < vertex.size(); j2++) {
 					if (vertex.get(j2).isActivate() && vertex.get(j2).getBathery() >= Integer.valueOf(getParameter("btosend"))) {
@@ -486,6 +498,12 @@ public class Main extends Applet implements Runnable, ItemListener,
 
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getActionCommand() == " |> ") {
+			
+			Menu.getInit().setEnabled(false);
+			Menu.getPreviw().setEnabled(false);
+			Menu.getNext().setEnabled(false);
+			Menu.getEnd().setEnabled(false);
+			
 			if(Menu.getPause().isEnabled()) {
 				Menu.setStartedSimulation(true);
 				check = false;
@@ -523,6 +541,20 @@ public class Main extends Applet implements Runnable, ItemListener,
 				//----
 			}
 			else {
+				String[] a = pauseLog.split("-");
+				vertex.get(Integer.valueOf(a[0])).setPackages(new LinkedList<Package>());
+				while(vertex.get(Integer.valueOf(a[0])).getPackages().size() < Integer.valueOf(a[3]))
+					vertex.get(Integer.valueOf(a[0])).getPackages().add(new Package());
+				//-----
+				for (int i = 4; i < a.length; i+=4) {
+					vertex.get(Integer.valueOf(a[i])).setActivate(Boolean.valueOf(a[i+1]));
+					vertex.get(Integer.valueOf(a[i])).resetBathery(Integer.valueOf(a[i+2]));
+					vertex.get(Integer.valueOf(a[i])).setPackages(new LinkedList<Package>());
+					while(vertex.get(Integer.valueOf(a[i])).getPackages().size() < Integer.valueOf(a[i+3]))
+						vertex.get(Integer.valueOf(a[i])).getPackages().add(new Package());
+				}
+				Menu.setTime(pauseTime);
+				//-----
 				Menu.getPause().setEnabled(true);
 				Menu.setPaused(false);
 			}
@@ -530,6 +562,22 @@ public class Main extends Applet implements Runnable, ItemListener,
 			repaint();
 		}
 		else if (ae.getActionCommand() == " || ") {
+			
+			Menu.getInit().setEnabled(true);
+			Menu.getPreviw().setEnabled(true);
+			Menu.getNext().setEnabled(true);
+			Menu.getEnd().setEnabled(true);
+			
+			pauseLog = "";
+			for (int i = 0; i < vertex.size(); i++) {
+				pauseLog += i + "-";
+				pauseLog += vertex.get(i).isActivate() + "-";
+				pauseLog += vertex.get(i).getBathery() + "-";
+				pauseLog += vertex.get(i).getPackages().size();
+				if(i!= quantity)
+					pauseLog += "-";
+			}
+			pauseTime = Menu.getTime();
 			Menu.getPause().setEnabled(false);
 			Menu.setPaused(true);
 		}

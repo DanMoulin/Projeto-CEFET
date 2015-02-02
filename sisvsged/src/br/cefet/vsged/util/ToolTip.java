@@ -143,9 +143,9 @@ public class ToolTip {
 			}
 			else {
 				//label fora da caixa
-				if(x + width > widthBox)// largura
+				if(x + width > widthBox && y + 120 < heightBox)// largura
 					ToolTip.setLocation(x - ((x + ToolTip.width) - widthBox - 20), y + 10);
-				else if(y + 120 > heightBox)// altura
+				else if(x + width < widthBox && y + 120 > heightBox)// altura
 					ToolTip.setLocation(x + 10, y - ((y + 120) - heightBox - 20));
 				else// largura e altura
 					ToolTip.setLocation(x - ((x + ToolTip.width) - widthBox - 20), y - ((y + 120) - heightBox - 20));

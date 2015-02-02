@@ -35,12 +35,12 @@ public class Box {
 	}
 
 	public static void drawGrid(Graphics g) {
-		for (int i = 20; i < height; i = i + 20) {
+		for (int i = 10; i < height; i = i + 10) {
 			g.setColor(Color.LIGHT_GRAY);
 			g.drawLine(0 + border, i + border, width + border, i + border);
 			g.setColor(Color.black);
 		}
-		for (int i = 20; i < width; i = i + 20) {
+		for (int i = 10; i < width; i = i + 10) {
 			g.setColor(Color.LIGHT_GRAY);
 			g.drawLine(i + border, 0 + border, i + border, height + border);
 			g.setColor(Color.black);
