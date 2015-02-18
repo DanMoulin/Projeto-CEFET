@@ -51,6 +51,8 @@ public class Main extends Applet implements Runnable, ItemListener,
 	private Caretaker log;
 	private boolean check = false;
 	private float minimumPercentage  = 0;
+	private String pauseLog;
+	private int pauseTime = 0;
 
 	public void init() {
 		super.init();
@@ -116,6 +118,11 @@ public class Main extends Applet implements Runnable, ItemListener,
 		add(ToolTip.getReceived());
 		
 		ToolTip.setVisible(false);
+		
+		Menu.getInit().setEnabled(false);
+		Menu.getPreviw().setEnabled(false);
+		Menu.getNext().setEnabled(false);
+		Menu.getEnd().setEnabled(false);
 	}
 
 	public static int[] returnsArrayOfIntegers(String[] split) {
@@ -139,7 +146,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 			Simulation.packageTransference(vertex, houteringTree);
 			
 			// ------------------------------
-			//aqui reune-se os dados que vão ser enviados ao servlet -- metodo
+			//aqui reune-se os dados que vÃ£o ser enviados ao servlet -- metodo
 			int bt = 0;
 			int ls = 0;
 			for (int i = 1; i < vertex.size(); i++) {
@@ -159,13 +166,13 @@ public class Main extends Applet implements Runnable, ItemListener,
 			//----possivel metodo
 			boolean verifyBatheryAndActivate = false;
 			for (int i = 1; i < BreadthFirstSearch.getNoName(); i++) {
-				//aqui se verifica a bateria dos primeiros vertices e se estão ativos
+				//aqui se verifica a bateria dos primeiros vertices e se estÃ£o ativos
 				if (vertex.get(i).getBathery() < 13 || !vertex.get(i).isActivate())
 					verifyBatheryAndActivate = true;
 			}
 			//----
 			
-			//verifica se a simulação está em condições de prosseguir -- metodo
+			//verifica se a simulaÃ§Ã£o estÃ¡ em condiÃ§Ãµes de prosseguir -- metodo
 			if (!verifyBatheryAndActivate && performBreadthFirstSearch() && getAchievedPercentage() >= minimumPercentage) {
 				Menu.setTime(Menu.getTime() + 1);
 				
@@ -178,7 +185,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 				batheryData += "-";
 				liveSensorData += "-";
 				coverageData += "-";
-			} else {//se a simulação for encerrada, entra aqui
+			} else {//se a simulaÃ§Ã£o for encerrada, entra aqui
 				insertLog();
 				Menu.setStartedSimulation(false);
 				Menu.setTime(Menu.getTime() + 1);
@@ -203,23 +210,23 @@ public class Main extends Applet implements Runnable, ItemListener,
 						finalBathery, minimumPercentage);
 				Resume.setAchieved(getAchievedPercentage());
 				
-				//verifica se algum evento interrompeu a simulação
+				//verifica se algum evento interrompeu a simulaÃ§Ã£o
 				//----talvez metodo
 				if (!performBreadthFirstSearch() || getAchievedPercentage() < minimumPercentage) {
-					String string = "Simulação interrompida!\n";
+					String string = "SimulaÃ§Ã£o interrompida!\n";
 					for (int i = 1; i < vertex.size(); i++)
 						if (!vertex.get(i).isActivate())
-							string += " - O ponto nº " + i + " apresentou uma falha inesperada;\n";
+							string += " - O ponto nÂº " + i + " apresentou uma falha inesperada;\n";
 					if (getAchievedPercentage() < minimumPercentage)
-						string += "Percentual de cobertura abaixo do mínimo!";
+						string += "Percentual de cobertura abaixo do mÃ­nimo!";
 					else
-						string += "Conexão com a rede perdida!";
+						string += "ConexÃ£o com a rede perdida!";
 					JOptionPane.showMessageDialog(null, string);
 				}
 				//----
 				// exibe caixa de mensagem
 				JOptionPane.showMessageDialog(null,
-						"Simulação terminada!\nDados recebidos pelo sink: "
+						"SimulaÃ§Ã£o terminada!\nDados recebidos pelo sink: "
 								+ vertex.get(0).getPackages().size() + "\nEnergia residual: " + temp
 								+ "\nTempo: " + Menu.getTime());
 				// setar pacotes -- metodo
@@ -232,6 +239,11 @@ public class Main extends Applet implements Runnable, ItemListener,
 					vertex.get(i).setActivate(true);
 				}
 				Menu.setTime(0);
+				
+				Menu.getInit().setEnabled(true);
+				Menu.getPreviw().setEnabled(true);
+				Menu.getNext().setEnabled(true);
+				Menu.getEnd().setEnabled(true);
 				
 				repaint();
 			}
@@ -392,8 +404,8 @@ public class Main extends Applet implements Runnable, ItemListener,
 		int t = 0;
 		int q = 0;
 		double temp;
-		for (int i = 10 + Box.getBorder(); i < Box.getWidth() + Box.getBorder(); i += 20) {
-			for (int j = 10 + Box.getBorder(); j < Box.getHeight() + Box.getBorder(); j += 20) {
+		for (int i = 5 + Box.getBorder(); i < Box.getWidth() + Box.getBorder(); i += 10) {
+			for (int j = 5 + Box.getBorder(); j < Box.getHeight() + Box.getBorder(); j += 10) {
 				q++;
 				for (int j2 = 1; j2 < vertex.size(); j2++) {
 					if (vertex.get(j2).isActivate() && vertex.get(j2).getBathery() >= Integer.valueOf(getParameter("btosend"))) {
@@ -486,12 +498,18 @@ public class Main extends Applet implements Runnable, ItemListener,
 
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getActionCommand() == " |> ") {
+			
+			Menu.getInit().setEnabled(false);
+			Menu.getPreviw().setEnabled(false);
+			Menu.getNext().setEnabled(false);
+			Menu.getEnd().setEnabled(false);
+			
 			if(Menu.getPause().isEnabled()) {
 				Menu.setStartedSimulation(true);
 				check = false;
 
 				// insere novos pacotes
-				// ---- metodo -- com alterações
+				// ---- metodo -- com alteraÃ§Ãµes
 				vertex.get(0).setPackages(new LinkedList<Package>());
 				for (int i = 1; i < vertex.size(); i++) {
 					vertex.get(i).setPackages(new LinkedList<Package>());
@@ -507,7 +525,7 @@ public class Main extends Applet implements Runnable, ItemListener,
 				log = new Caretaker(new ArrayList<Text>());
 				insertLog();
 
-				//JOptionPane.showMessageDialog(null, "Simulação iniciada !");
+				//JOptionPane.showMessageDialog(null, "SimulaÃ§Ã£o iniciada !");
 				// ----grafico de nivel de bateria
 				//---- metodo
 				int bt = 0;
@@ -523,6 +541,20 @@ public class Main extends Applet implements Runnable, ItemListener,
 				//----
 			}
 			else {
+				String[] a = pauseLog.split("-");
+				vertex.get(Integer.valueOf(a[0])).setPackages(new LinkedList<Package>());
+				while(vertex.get(Integer.valueOf(a[0])).getPackages().size() < Integer.valueOf(a[3]))
+					vertex.get(Integer.valueOf(a[0])).getPackages().add(new Package());
+				//-----
+				for (int i = 4; i < a.length; i+=4) {
+					vertex.get(Integer.valueOf(a[i])).setActivate(Boolean.valueOf(a[i+1]));
+					vertex.get(Integer.valueOf(a[i])).resetBathery(Integer.valueOf(a[i+2]));
+					vertex.get(Integer.valueOf(a[i])).setPackages(new LinkedList<Package>());
+					while(vertex.get(Integer.valueOf(a[i])).getPackages().size() < Integer.valueOf(a[i+3]))
+						vertex.get(Integer.valueOf(a[i])).getPackages().add(new Package());
+				}
+				Menu.setTime(pauseTime);
+				//-----
 				Menu.getPause().setEnabled(true);
 				Menu.setPaused(false);
 			}
@@ -530,6 +562,22 @@ public class Main extends Applet implements Runnable, ItemListener,
 			repaint();
 		}
 		else if (ae.getActionCommand() == " || ") {
+			
+			Menu.getInit().setEnabled(true);
+			Menu.getPreviw().setEnabled(true);
+			Menu.getNext().setEnabled(true);
+			Menu.getEnd().setEnabled(true);
+			
+			pauseLog = "";
+			for (int i = 0; i < vertex.size(); i++) {
+				pauseLog += i + "-";
+				pauseLog += vertex.get(i).isActivate() + "-";
+				pauseLog += vertex.get(i).getBathery() + "-";
+				pauseLog += vertex.get(i).getPackages().size();
+				if(i!= quantity)
+					pauseLog += "-";
+			}
+			pauseTime = Menu.getTime();
 			Menu.getPause().setEnabled(false);
 			Menu.setPaused(true);
 		}
@@ -620,14 +668,14 @@ public class Main extends Applet implements Runnable, ItemListener,
 				e.printStackTrace();
 			}
 		}
-		else if(ae.getActionCommand() == "Gráfico de nivel de bateria") {
-			callServlet(1, "Gráfico de nível de bateria", "bateria total", batheryData);
+		else if(ae.getActionCommand() == "GrÃ¡fico de nivel de bateria") {
+			callServlet(1, "GrÃ¡fico de nÃ­vel de bateria", "bateria total", batheryData);
 		}
-		else if(ae.getActionCommand() == "Gráfico de vida útil de sensores") {
-			callServlet(1, "Gráfico de vida útil de sensores", "sensores ativos", liveSensorData);
+		else if(ae.getActionCommand() == "GrÃ¡fico de vida Ãºtil de sensores") {
+			callServlet(1, "GrÃ¡fico de vida Ãºtil de sensores", "sensores ativos", liveSensorData);
 		}
-		else if(ae.getActionCommand() == "Gráfico de cobertura") {
-			callServlet(1, "Gráfico de cobertura", "cobertira atingida", coverageData);
+		else if(ae.getActionCommand() == "GrÃ¡fico de cobertura") {
+			callServlet(1, "GrÃ¡fico de cobertura", "cobertira atingida", coverageData);
 		}
 	}
 
